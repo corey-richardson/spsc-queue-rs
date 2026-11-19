@@ -7,14 +7,14 @@ use std::time::{Duration, Instant};
 use crate::config;
 use crate::message::Message;
 
-pub fn reader_thread(comport: &str, duration: Duration, tx: Sender<Message>) {
+pub fn reader_thread(comport: String, duration: Duration, tx: Sender<Message>) {
     if let Err(err) = run_reader(comport, duration, &tx) {
         eprintln!("Reader Error: {err}")
     }
 }
 
 fn run_reader(
-    comport: &str,
+    comport: String,
     duration: Duration,
     tx: &Sender<Message>,
 ) -> Result<(), Box<dyn std::error::Error>> {
