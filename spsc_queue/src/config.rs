@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 // Serial Port Communication Settings
-pub const BAUD_RATE: u32 = 1_036_800;
+pub const BAUD_RATE: u32 = 115_200;
 pub const BYTE_SIZE: u8 = 8;
 pub const DATA_BITS: serialport::DataBits = serialport::DataBits::Eight;
 pub const PARITY: serialport::Parity = serialport::Parity::None;
