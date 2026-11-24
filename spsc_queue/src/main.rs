@@ -1,23 +1,41 @@
+use chrono::Local;
 use std::{env, process, sync::mpsc, thread, time::Duration};
 
 use spsc_queue::{config, consumer, producer};
 
+/// Generates a timestamped CSV filename using the configured prefix
+/// and current local time.
+fn get_timestamped_filename() -> String {
+    let now = Local::now();
+    format!(
+        "{}_{}.csv",
+        config::FILENAME_PREFIX,
+        now.format("%Y-%m-%d_%H-%M-%S")
+    )
+}
+
 /// Entry point for the SPSC Queue application
 ///
-/// - Parses command-line arguments for the COMPORT, duration in seconds, and an optional output CSV filename.
+/// - Parses command-line arguments for the COMPORT, duration in seconds, and
+///   an optional output CSV filename.
 /// - Acquires a system and display `keepawake` guard.
-/// - Spawns a single-producer single-consumer (SPSC) pipeline using `sync::mspc`.
+/// - Spawns a single-producer single-consumer (SPSC) pipeline
+///   using `sync::mspc`.
 ///
 /// ## Command Line Arguments
 ///
-/// - `<COMPORT>` Serial Port Identifier (e.g `COM4` or `COM10`). Prefixed with `\\.\` for Windows compatibility on COMPORTs at or above COM10.
+/// - `<COMPORT>` Serial Port Identifier (e.g `COM4` or `COM10`). Prefixed with
+///   `\\.\` for Windows compatibility on COMPORTs at or above COM10.
 /// - `<DURATION (s)>` Recording duration in seconds, parsed as `u64`.
-/// - `<OUTPUT_FILENAME?>` Optional output filename for CSV file. Defaults to `config::DEFAULT_OUTPUT_FILENAME`.
+/// - `<OUTPUT_FILENAME?>` Optional output filename for CSV file. Defaults to
+///   `config::DEFAULT_OUTPUT_FILENAME`.
 ///
 /// ## Exit Codes and Panics
 ///
-/// - Exits with `-1` if fewer than 2 arguments are passed through the command-line.
-/// - Logs a warning to `stderr` and continues without a guard if `keepawake` fails to initialise.
+/// - Exits with `-1` if fewer than 2 arguments are passed
+///   through the command-line.
+/// - Logs a warning to `stderr` and continues without a guard if `keepawake`
+///   fails to initialise.
 /// - Logs panics from worker threads if `join` returns `Err`.
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -49,7 +67,7 @@ fn main() {
     let output_filename = if args.len() > 3 {
         format!("{}.csv", args[3])
     } else {
-        config::DEFAULT_OUTPUT_FILENAME.to_string()
+        get_timestamped_filename()
     };
 
     println!("Recording {comport} to {output_filename} for {duration_secs} seconds.\n");

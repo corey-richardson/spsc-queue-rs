@@ -16,4 +16,4 @@ pub const PACKET_SIZE: usize = 6; // Sync byte (1) + Data bytes (4) + Checksum (
 pub const PRINT_SUBSAMPLE_RATE: Duration = Duration::from_millis(1000 / 3);
 
 // Default configuration values
-pub const DEFAULT_OUTPUT_FILENAME: &str = "output.csv";
+pub const FILENAME_PREFIX: &str = "log";
