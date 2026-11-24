@@ -1,17 +1,13 @@
 use chrono::Local;
 use std::{env, process, sync::mpsc, thread, time::Duration};
 
-use spsc_queue::{config, consumer, producer};
+use spsc_queue::{consumer, producer};
 
 /// Generates a timestamped CSV filename using the configured prefix
 /// and current local time.
 fn get_timestamped_filename() -> String {
     let now = Local::now();
-    format!(
-        "{}_{}.csv",
-        config::FILENAME_PREFIX,
-        now.format("%Y-%m-%d_%H-%M-%S")
-    )
+    format!("{}.csv", now.format("%Y-%m-%d_%H-%M-%S"))
 }
 
 /// Entry point for the SPSC Queue application
