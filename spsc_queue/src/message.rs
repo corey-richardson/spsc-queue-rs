@@ -8,8 +8,8 @@ use std::fmt;
 /// use spsc_queue::message::Message;
 ///
 /// let message = Message {
-///     bytes: [0xFF, 0x10, 0x20, 0x30, 0x40],
-///     checksum: 0x60,
+///     bytes: [0x55, 0x10, 0x20, 0x30, 0x40],
+///     checksum: 0x0A,
 /// };
 /// ```
 pub struct Message {
@@ -41,14 +41,14 @@ impl Message {
     ///
     /// // Sum of bytes is 0x019F -> 0x9F (u8); Bitwise NOT is 0x60.
     /// let valid = Message {
-    ///     bytes: [0xFF, 0x10, 0x20, 0x30, 0x40],
-    ///     checksum: 0x60,
+    ///     bytes: [0x55, 0x10, 0x20, 0x30, 0x40],
+    ///     checksum: 0x0A,
     /// };
     /// assert!(valid.verify());
     ///
     /// let invalid = Message {
-    ///     bytes: [0xFF, 0x10, 0x20, 0x30, 0x40],
-    ///     checksum: 0x61,
+    ///     bytes: [0x55, 0x10, 0x20, 0x30, 0x40],
+    ///     checksum: 0x0B,
     /// };
     /// assert!(!invalid.verify());
     /// ```
@@ -77,14 +77,14 @@ impl fmt::Display for Message {
     /// ```
     /// use spsc_queue::message::Message;
     ///
-    /// let bytes = [0xFF, 0x00, 0x0A, 0xFF, 0xFE];
+    /// let bytes = [0x55, 0x00, 0x0A, 0xFF, 0xFE];
     /// let sum = bytes.iter().fold(0u8, |acc, &b| acc.wrapping_add(b));
     /// let msg = Message {
     ///     bytes,
     ///     checksum: !sum,
     /// };
     ///
-    /// assert_eq!(msg.to_string(), "255,0,10,10,255,254,-2,249\n");
+    /// assert_eq!(msg.to_string(), "85,0,10,10,255,254,-2,163\n");
     /// ```
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
@@ -105,12 +105,11 @@ impl fmt::Display for Message {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config;
 
     fn create_valid_message(value1: i16, value2: i16) -> Message {
         let [msb1, lsb1] = value1.to_be_bytes();
         let [msb2, lsb2] = value2.to_be_bytes();
-        let bytes = [config::SYNC_BYTE, msb1, lsb1, msb2, lsb2];
+        let bytes = [0x55, msb1, lsb1, msb2, lsb2];
 
         let sum = bytes.iter().fold(0u8, |acc, &b| acc.wrapping_add(b));
 
@@ -161,7 +160,7 @@ mod tests {
         // Wrapped to u8 -> 0x51 (81); bitwise NOT !0x51 = 0xAE (174).
         let message = create_valid_message(-1, -1);
 
-        assert_eq!(message.bytes, [config::SYNC_BYTE, 0xFF, 0xFF, 0xFF, 0xFF]);
+        assert_eq!(message.bytes, [0x55, 0xFF, 0xFF, 0xFF, 0xFF]);
         assert_eq!(message.checksum, 174);
         assert!(message.verify());
     }
