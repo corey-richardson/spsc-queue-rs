@@ -24,11 +24,11 @@ fn get_timestamped_filename() -> String {
 ///   `\\.\` for Windows compatibility on COMPORTs at or above COM10.
 /// - `<DURATION (s)>` Recording duration in seconds, parsed as `u64`.
 /// - `<OUTPUT_FILENAME?>` Optional output filename for CSV file. Defaults to
-///   `config::DEFAULT_OUTPUT_FILENAME`.
+///   the current datetime.
 ///
 /// ## Exit Codes and Panics
 ///
-/// - Exits with `-1` if fewer than 2 arguments are passed
+/// - Exits with `1` if fewer than 2 arguments are passed
 ///   through the command-line.
 /// - Logs a warning to `stderr` and continues without a guard if `keepawake`
 ///   fails to initialise.
@@ -43,7 +43,7 @@ fn main() {
         println!("Example: spsc_queue COM4 120");
         println!("Example: spsc_queue COM4 120 test_run\n");
 
-        process::exit(-1);
+        process::exit(1);
     }
 
     // Windows requires \\.\ prefix before COMPORT 10 or above
@@ -54,7 +54,7 @@ fn main() {
         Ok(secs) => secs,
         Err(_) => {
             eprintln!("Failed to parse duration '{}'.", args[2]);
-            process::exit(-1);
+            process::exit(1);
         }
     };
     let duration = Duration::from_secs(duration_secs);

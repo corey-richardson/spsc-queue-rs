@@ -18,7 +18,7 @@ pub struct Message {
 }
 
 impl Message {
-    /// Combines the Most Significant Byte and Least Signification Byte into `i16` using Big-Endian byte order.
+    /// Combines the Most Significant Byte and Least Significant Byte into `i16` using Big-Endian byte order.
     ///
     /// ## Example
     ///
@@ -62,7 +62,7 @@ impl Message {
         let mut sum = self
             .bytes
             .iter()
-            .fold(0u8, |accumalator, &b| accumalator.wrapping_add(b));
+            .fold(0u8, |accumulator, &b| accumulator.wrapping_add(b));
 
         sum = !sum;
         self.checksum == sum
@@ -70,7 +70,7 @@ impl Message {
 }
 
 impl fmt::Display for Message {
-    /// Formats the message as a CSV row containing the raw bytes, combine 16-bit sensor values, and checksum.
+    /// Formats the message as a CSV row containing the raw bytes, combined 16-bit sensor values, and checksum.
     ///
     /// ## Example
     ///

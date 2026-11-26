@@ -19,7 +19,7 @@ fn run_writer(output_filename: impl AsRef<Path>, rx: Receiver<Message>) -> io::R
 
     writeln!(
         writer,
-        "SyncByte,Byte1,Byte2,SensorValue1,Byte3,Byte4,SensorValue2,CS\n",
+        "SyncByte,Byte1,Byte2,SensorValue1,Byte3,Byte4,SensorValue2,CS",
     )?;
 
     let mut last_display_time = Instant::now();

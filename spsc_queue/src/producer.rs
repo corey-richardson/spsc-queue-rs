@@ -41,24 +41,24 @@ fn run_reader(
             Ok(bytes_read) if bytes_read > 0 => {
                 for &byte in &receive_data_buffer[..bytes_read] {
                     slider.push_back(byte);
-                    if slider.len() > config::PACKET_SIZE {
-                        slider.pop_front();
-                    }
 
-                    if slider.len() == config::PACKET_SIZE
-                        && slider.front().copied() == Some(config::SYNC_BYTE)
-                    {
-                        let received_message = Message {
-                            bytes: [slider[0], slider[1], slider[2], slider[3], slider[4]],
-                            checksum: slider[5],
-                        };
+                    if slider.len() == config::PACKET_SIZE {
+                        if slider.front().copied() == Some(config::SYNC_BYTE) {
+                            let received_message = Message {
+                                bytes: [slider[0], slider[1], slider[2], slider[3], slider[4]],
+                                checksum: slider[5],
+                            };
 
-                        if received_message.verify() {
-                            if tx.send(received_message).is_err() {
-                                return Ok(());
+                            if received_message.verify() {
+                                if tx.send(received_message).is_err() {
+                                    return Ok(());
+                                }
+                                slider.clear();
+                                continue;
                             }
-                            slider.clear();
                         }
+
+                        slider.pop_front();
                     }
                 }
             }
