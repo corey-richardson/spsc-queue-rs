@@ -107,14 +107,6 @@ mod tests {
     use super::*;
     use crate::config;
 
-    #[test]
-    fn combine_msb_lsb_handles_positive_and_negative_values() {
-        assert_eq!(Message::combine_msb_lsb(0x01, 0x00), 256);
-        assert_eq!(Message::combine_msb_lsb(0xFF, 0xFF), -1);
-        assert_eq!(Message::combine_msb_lsb(0x80, 0x00), i16::MIN);
-        assert_eq!(Message::combine_msb_lsb(0x7F, 0xFF), i16::MAX);
-    }
-
     fn create_valid_message(value1: i16, value2: i16) -> Message {
         let [msb1, lsb1] = value1.to_be_bytes();
         let [msb2, lsb2] = value2.to_be_bytes();
@@ -126,6 +118,14 @@ mod tests {
             bytes,
             checksum: !sum,
         }
+    }
+
+    #[test]
+    fn combine_msb_lsb_handles_positive_and_negative_values() {
+        assert_eq!(Message::combine_msb_lsb(0x01, 0x00), 256);
+        assert_eq!(Message::combine_msb_lsb(0xFF, 0xFF), -1);
+        assert_eq!(Message::combine_msb_lsb(0x80, 0x00), i16::MIN);
+        assert_eq!(Message::combine_msb_lsb(0x7F, 0xFF), i16::MAX);
     }
 
     #[test]
